@@ -1,0 +1,92 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/animations';
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: $color-background;
+}
+
+.content {
+  flex: 1;
+  padding: $space-8 $space-6;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// Loading / Error states
+.state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $space-8 $space-6;
+  gap: $space-4;
+}
+
+.loadingText {
+  font-family: $font-code;
+  font-size: 1rem;
+  color: rgba($color-primary, 0.8);
+}
+
+.cursor {
+  animation: blink 1s step-end infinite;
+  display: inline-block;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+.errorCode {
+  font-family: $font-display;
+  font-size: 2rem;
+  color: $color-alert;
+}
+
+.errorDetail {
+  font-family: $font-code;
+  font-size: 0.9rem;
+  color: rgba($color-alert, 0.8);
+}
+
+// Main layout — mobile-first
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+
+  @media (min-width: $bp-desktop) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: $space-12;
+  }
+}
+
+.artifactSection {
+  display: flex;
+  justify-content: center;
+}
+
+.detailsSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.fileName {
+  font-family: $font-display;
+  font-size: 1.8rem;
+  color: $color-primary;
+  word-break: break-word;
+  line-height: 1.2;
+
+  @include glow-text;
+}

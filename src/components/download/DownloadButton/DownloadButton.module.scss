@@ -1,0 +1,65 @@
+@use '../../../styles/tokens' as *;
+
+@keyframes pulse-glow-primary {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(13, 242, 13, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(13, 242, 13, 0.7),
+      0 0 35px rgba(13, 242, 13, 0.3);
+  }
+}
+
+.button {
+  display: block;
+  width: 100%;
+  min-height: 48px; // WCAG 2.1 AA touch target
+  padding: $space-4 $space-6;
+  background: $color-primary;
+  color: $color-background;
+  font-family: $font-display;
+  font-size: 1.4rem;
+  letter-spacing: 0.08em;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+
+  &:hover:not(:disabled) {
+    background: $color-white;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px $color-primary, 0 0 0 4px $color-background;
+  }
+}
+
+.idle {
+  animation: pulse-glow-primary 2s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.loading {
+  background: rgba($color-primary, 0.6);
+  cursor: not-allowed;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+}
+
+.complete {
+  background: $color-primary;
+  cursor: default;
+}
+
+.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  animation: none;
+}

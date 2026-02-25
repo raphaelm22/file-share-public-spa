@@ -1,0 +1,68 @@
+@use '../../../styles/tokens' as *;
+
+@keyframes pulse-glow-alert {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(255, 51, 51, 0.9),
+      0 0 25px rgba(255, 51, 51, 0.5);
+  }
+}
+
+@keyframes pulse-opacity {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.label {
+  font-family: $font-code;
+  font-size: 0.75rem;
+  color: rgba($color-alert, 0.7);
+  letter-spacing: 0.1em;
+}
+
+.display {
+  font-family: $font-display;
+  font-size: 3rem;
+  color: $color-alert;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.urgent {
+  animation: pulse-glow-alert 0.8s ease-in-out infinite;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: rgba($color-alert, 0.2);
+}
+
+.progressFill {
+  height: 100%;
+  background: $color-alert;
+  transition: width 0.9s linear;
+}
+
+.progressUrgent {
+  animation: pulse-opacity 0.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .urgent,
+  .progressUrgent {
+    animation: none;
+  }
+}

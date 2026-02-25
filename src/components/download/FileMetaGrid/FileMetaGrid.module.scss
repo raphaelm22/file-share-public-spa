@@ -1,0 +1,36 @@
+@use '../../../styles/tokens' as *;
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba($color-primary, 0.3);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-3 $space-4;
+  min-height: 48px;
+  gap: $space-4;
+
+  & + & {
+    border-top: 1px solid rgba($color-primary, 0.2);
+  }
+}
+
+.label {
+  font-family: $font-code;
+  font-size: 0.75rem;
+  color: rgba($color-primary, 0.6);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.value {
+  font-family: $font-code;
+  font-size: 0.85rem;
+  color: $color-primary;
+  text-align: right;
+  word-break: break-all;
+}

@@ -1,0 +1,23 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: $color-background;
+  border-bottom: 1px solid rgba($color-primary, 0.3);
+  padding: $space-4 $space-6;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  font-family: $font-display;
+  font-size: 1.4rem;
+  color: $color-primary;
+  letter-spacing: 0.05em;
+
+  @include glow-text;
+}
