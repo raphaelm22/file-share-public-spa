@@ -49,6 +49,11 @@ jobs:
           check 200 "browser opens share link"     -H 'Accept: text/html' http://localhost:8080/dl/$T
           check 200 "browser opens malformed link" -H 'Accept: text/html' http://localhost:8080/dl/abc
           check 404 "fetch malformed token"        -H 'Accept: application/json' http://localhost:8080/dl/abc
+          check 502 "info route proxied (no backend in CI)" http://localhost:8080/dl/$T/info
+          check 404 "info with malformed token"    http://localhost:8080/dl/abc/info
+          curl -s -D - -o /dev/null -H "Accept: text/html" http://localhost:8080/dl/$T | tee /tmp/p
+          grep -qi "^cache-control: no-store" /tmp/p
+          grep -qi "^vary: accept" /tmp/p
           check 404 "admin API blocked"            http://localhost:8080/api/v1/files
           check 404 "SignalR hub blocked"          http://localhost:8080/hubs/fileshare
           check 403 "POST on share blocked"        -X POST http://localhost:8080/dl/$T
