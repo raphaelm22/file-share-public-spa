@@ -1,6 +1,7 @@
 name: Build and Push Docker Image
 
 on:
+  pull_request:
   push:
     branches: [main]
 
@@ -8,7 +9,58 @@ env:
   IMAGE_NAME: ghcr.io/raphaelm22/file-share-public-spa
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npx vitest run
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image (amd64, local)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: public-spa:ci
+
+      - name: nginx config + security smoke test
+        run: |
+          set -eu
+          docker run -d --name spa -p 8080:80 public-spa:ci
+          sleep 2
+          docker exec spa nginx -t
+          T=$(printf 'a%.0s' $(seq 1 64))
+          check() { # expected_code description curl-args...
+            exp=$1; desc=$2; shift 2
+            got=$(curl -s -o /dev/null -w '%{http_code}' "$@")
+            echo "$desc → $got (expected $exp)"; [ "$got" = "$exp" ]
+          }
+          check 200 "SPA root"                     http://localhost:8080/
+          check 200 "browser opens share link"     -H 'Accept: text/html' http://localhost:8080/dl/$T
+          check 200 "browser opens malformed link" -H 'Accept: text/html' http://localhost:8080/dl/abc
+          check 404 "fetch malformed token"        -H 'Accept: application/json' http://localhost:8080/dl/abc
+          check 404 "admin API blocked"            http://localhost:8080/api/v1/files
+          check 404 "SignalR hub blocked"          http://localhost:8080/hubs/fileshare
+          check 403 "POST on share blocked"        -X POST http://localhost:8080/dl/$T
+          check 200 "robots.txt"                   http://localhost:8080/robots.txt
+          curl -s -D - -o /dev/null http://localhost:8080/ | tee /tmp/h
+          grep -qi '^content-security-policy:' /tmp/h
+          grep -qi '^referrer-policy: no-referrer' /tmp/h
+          ! grep -qi '^server: nginx/' /tmp/h
+
   build-and-push:
+    needs: test
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
