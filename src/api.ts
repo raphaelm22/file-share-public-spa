@@ -3,7 +3,7 @@ import type { ShareInfo } from './types'
 const API_BASE = import.meta.env.VITE_API_BASE ?? ''
 
 export async function getShareInfo(token: string, signal?: AbortSignal): Promise<ShareInfo> {
-  const res = await fetch(`${API_BASE}/dl/${token}`, { signal })
+  const res = await fetch(`${API_BASE}/dl/${token}`, { signal, headers: { Accept: 'application/json' } })
   if (!res.ok) {
     const body = await res.json().catch(() => ({})) as { detail?: string }
     throw new Error(body.detail ?? 'UNKNOWN_ERROR')
